@@ -15,11 +15,15 @@ This article describes how to troubleshoot the failures that occur during an SMB
 
 ## Negotiate fails
 
+
 The SMB server receives an SMB NEGOTIATE request from an SMB client. The connection times out and is reset after 60 seconds. There might be an ACK message after about 200 microseconds.
 
-This problem is most often caused by antivirus program.
+This problem is  often caused by antivirus program on the SMB server machine. 
+It also can  be  caused by  other issues  on the SMB server  machine, such as:
+  - Filesystem filter  driver that delay  or  block access to file system
+  - severe performance  issue  on the SMB server machine.
 
-If you're using Windows Server 2008 R2, there are hotfixes for this problem. Make sure that the SMB client and the SMB server are up to date.
+
 
 ## Session Setup fails
 
@@ -52,8 +56,16 @@ The cause of common Tree Connect errors can be found in [3.3.5.7 Receiving an SM
 - `[STATUS_ACCESS_DENIED]`
 
   Verify that the disk and folder that are used by the share exists and is accessible.
+  Also,  verify  that  the account you are using is  a  admin user  on the SMB server machine in case  the error is  returned  for attempts to access a built-in admin share. 
+ Access Denied can also be returned from TREE CONNECT for non-ACL related reasons such as:
 
+    -  When the TREE CONNECT request is not signed and/or encrypted as per server / session / dialect-wide signing / encryption requirements
+    -  When an anonymous user attempts to use a NULL session to access a share that is not in the NullSessionShares list
+    -  When a client that doesn’t support encryption tries to access a share that requires SMB Encryption
+    
 If you're using SMBv3 or later, check whether the server and the share require encryption, but the client doesn't support encryption. To do this, take the following actions:
+
+
 
 - Check the server by running the following cmdlet.
 
